@@ -6,3 +6,4 @@ exports.homePage = ((req, res) => {
 exports.Login=((req,res)=>{
     res.render("adminLogin");
 })
+//
