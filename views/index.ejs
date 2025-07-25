@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #f8f9fa, #e2e6ea);
+        }
+
+        .navbar {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            color: #0d6efd !important;
+        }
+
+        .category-icon {
+            font-size: 2.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .category-icon {
+            transform: scale(1.2);
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .section-title {
+            font-weight: bold;
+            font-size: 2rem;
+            color: #0d6efd;
+            margin-top: 30px;
+        }
+
+        .carousel-inner {
+            min-height: 200px;
+        }
+
+        .carousel-item h3 {
+            color: #0d6efd;
+        }
+
+        .carousel-indicators [data-bs-target] {
+            background-color: #0d6efd;
+        }
+
+        footer {
+            background: #343a40;
+            color: #fff;
+            padding: 20px 0;
+        }
+
+        footer a {
+            color: #ffc107;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white">
+        <div class="container-fluid px-5">
+            <a class="navbar-brand fw-bold" href="#">ProductManagement</a>
+
+            <ul class="navbar-nav ms-auto fw-bold">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="loginDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Login
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="loginDropdown">
+                        <li><a class="dropdown-item" href="/Login">Admin</a></li>
+                        <li><a class="dropdown-item" href="/register">User</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="#about">About Us</a></li>
+                <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Categories -->
+    <div class="container text-center my-5">
+        <h2 class="section-title mb-4 text-black">Shop by Category</h2>
+        <div class="row row-cols-2 row-cols-md-4 g-4">
+            <div class="col">
+                <div class="card p-4 bg-white shadow-sm">
+                    <div class="category-icon">📱</div>
+                    <div class="fw-bold mt-2">Electronic</div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card p-4 bg-white shadow-sm">
+                    <div class="category-icon">👗</div>
+                    <div class="fw-bold mt-2">Clothes</div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card p-4 bg-white shadow-sm">
+                    <div class="category-icon">🛒</div>
+                    <div class="fw-bold mt-2">Grocery</div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card p-4 bg-white shadow-sm">
+                    <div class="category-icon">💊</div>
+                    <div class="fw-bold mt-2">Medicine</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Promotion Carousel -->
+    <div class="container my-5">
+        <h2 class="section-title text-center text-black">Featured Products & Offers</h2>
+        <div id="promoCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="0" class="active"
+                    aria-current="true"></button>
+                <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="1"></button>
+                <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="2"></button>
+            </div>
+            <div class="carousel-inner bg-white p-5 shadow-sm rounded text-center">
+                <div class="carousel-item active">
+                    <h3>50% Off on Electronics!</h3>
+                    <p>Limited time offer on mobile, laptops and more.</p>
+                </div>
+                <div class="carousel-item">
+                    <h3>Buy 1 Get 1 Free on Clothing</h3>
+                    <p>Exclusive festive collection.</p>
+                </div>
+                <div class="carousel-item">
+                    <h3>Groceries at wholesale prices</h3>
+                    <p>Get home delivery in 2 hours.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Us -->
+    <div id="about" class="container my-5">
+        <h2 class="section-title text-center text-black">About Us</h2>
+        <p class="text-center">We are committed to providing a seamless shopping experience for our users. Our Product
+            Management System helps you explore, add, and manage your favorite items efficiently and securely.</p>
+    </div>
+
+    <!-- Contact -->
+    <div id="contact" class="container my-5">
+        <h2 class="section-title text-center text-black">Contact</h2>
+        <p class="text-center">📧 Email: <a href="mailto:kashids961@gmail.com">kashids961@gmail.com</a> | ☎️ Phone:
+            +91-9890157552</p>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <p class="mb-0">© 2025 ProductManagement. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
