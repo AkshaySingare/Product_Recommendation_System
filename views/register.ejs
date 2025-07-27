@@ -20,11 +20,6 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* .card {
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        } */
-
         .card-header {
             background-color: #0d6efd;
             color: white;
@@ -88,71 +83,62 @@
             </div>
         </div>
     </nav>
-    <div class="container mt-5">
+    <div class="container mt-3 p-3">
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">User Registration</div>
                     <div class="card-body">
-                        <form action="/saveemp" method="POST" enctype="multipart/form-data">
-
+                        <form action="/saveemp" method="POST">
                             <!-- User Name -->
                             <div class="mb-3">
                                 <label class="form-label">User Name</label>
-                                <input type="text" name="name" class="form-control" placeholder="Enter User Name"
-                                    required>
+                                <input type="text" name="name" class="form-control" required
+                                    placeholder="Enter User Name" />
                             </div>
 
                             <!-- Email -->
                             <div class="mb-3">
                                 <label class="form-label">Email</label>
-                                <input type="email" id="uemail" name="email" class="form-control"
-                                    placeholder="Enter Email" onblur="checkEmailExistance(this.value)" required>
-                                <small id="labelMsg" class="form-text text-danger"></small>
+                                <input type="email" name="email" class="form-control" required
+                                    placeholder="Enter Email" />
+
                             </div>
 
                             <!-- Contact -->
                             <div class="mb-3">
                                 <label class="form-label">Contact</label>
-                                <input type="tel" name="contact" pattern="[0-9]{10}" class="form-control"
-                                    placeholder="10-digit Contact Number" required>
+                                <input type="tel" name="contact" class="form-control" required pattern="[0-9]{10}"
+                                    placeholder="10-digit Contact Number" />
+
                             </div>
 
                             <!-- Address -->
                             <div class="mb-3">
                                 <label class="form-label">Home Address</label>
-                                <textarea name="address" class="form-control" rows="3" placeholder="Enter Home Address"
-                                    required></textarea>
+                                <textarea name="address" class="form-control" rows="2" required
+                                    placeholder="Enter Home Address"></textarea>
+
                             </div>
 
-                            <!-- Upload Photo -->
+                            <!-- Password -->
                             <div class="mb-3">
-                                <label class="form-label">Upload Photo</label>
-                                <input type="file" name="Photo" class="form-control" accept="image/*" required>
-                            </div>
+                                <label class="form-label">Password</label>
+                                <input type="password" name="contact" class="form-control" required pattern="[0-9]{10}"
+                                    placeholder="Ente Password" />
 
+                            </div>
                             <!-- Submit -->
-                            <div class="d-flex justify-content-center ">
+                            <div class="d-flex justify-content-center">
                                 <button type="submit" class="btn btn-primary w-50 fw-bold">Register User</button>
                             </div>
+
 
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div id="about" class="container my-5">
-        <h2 class="section-title text-center">About Us</h2>
-        <p class="text-center">We are committed to providing a seamless shopping experience for our users. Our Product
-            Management System helps you explore, add, and manage your favorite items efficiently and securely.</p>
-    </div>
-
-    <!-- Contact -->
-    <div id="contact" class="container my-5">
-        <h2 class="section-title text-center text-black">Contact</h2>
-        <p class="text-center">📧 Email: <a href="mailto:kashids961@gmail.com">kashids961@gmail.com</a> | ☎️ Phone:
-            +91-9890157552</p>
     </div>
 
     <!-- Footer -->

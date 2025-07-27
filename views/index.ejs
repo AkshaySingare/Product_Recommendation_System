@@ -5,11 +5,43 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Product Management</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(to right, #f8f9fa, #e2e6ea);
+        }
+
+        .images {
+            height: 600px;
+            width: 90%;
+            margin: auto;
+            background-repeat: no-repeat;
+            background-position: left;
+            background-size: 100% 100%;
+            animation: change 20s infinite;
+        }
+
+        @keyframes change {
+            5% {
+                background-image: url("https://images.pexels.com/photos/51958/oranges-fruit-vitamins-healthy-eating-51958.jpeg");
+            }
+
+            25% {
+                background-image: url("https://images.pexels.com/photos/90946/pexels-photo-90946.jpeg");
+            }
+
+            50% {
+                background-image: url("https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+            }
+
+            100% {
+                background-image: url("https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHByb2R1Y3R8ZW58MHx8MHx8fDA%3D");
+            }
         }
 
         .navbar {
@@ -81,15 +113,9 @@
             <a class="navbar-brand fw-bold" href="#">ProductManagement</a>
 
             <ul class="navbar-nav ms-auto fw-bold">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="loginDropdown" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        Login
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="loginDropdown">
-                        <li><a class="dropdown-item" href="/Login">Admin</a></li>
-                        <li><a class="dropdown-item" href="/register">User</a></li>
-                    </ul>
+                <li class="nav-item">
+                    <!-- <a class="nav-link" href="/register">Login</a> -->
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="#about">About Us</a></li>
                 <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
@@ -128,32 +154,11 @@
         </div>
     </div>
 
-    <!-- Promotion Carousel -->
-    <div class="container my-5">
-        <h2 class="section-title text-center text-black">Featured Products & Offers</h2>
-        <div id="promoCarousel" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-indicators">
-                <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="0" class="active"
-                    aria-current="true"></button>
-                <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="1"></button>
-                <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="2"></button>
-            </div>
-            <div class="carousel-inner bg-white p-5 shadow-sm rounded text-center">
-                <div class="carousel-item active">
-                    <h3>50% Off on Electronics!</h3>
-                    <p>Limited time offer on mobile, laptops and more.</p>
-                </div>
-                <div class="carousel-item">
-                    <h3>Buy 1 Get 1 Free on Clothing</h3>
-                    <p>Exclusive festive collection.</p>
-                </div>
-                <div class="carousel-item">
-                    <h3>Groceries at wholesale prices</h3>
-                    <p>Get home delivery in 2 hours.</p>
-                </div>
-            </div>
-        </div>
+    <div class="images">
+
     </div>
+
+
 
     <!-- About Us -->
     <div id="about" class="container my-5">
@@ -165,14 +170,45 @@
     <!-- Contact -->
     <div id="contact" class="container my-5">
         <h2 class="section-title text-center text-black">Contact</h2>
-        <p class="text-center">📧 Email: <a href="mailto:kashids961@gmail.com">kashids961@gmail.com</a> | ☎️ Phone:
-            +91-9890157552</p>
+        <p class="text-center">📧 Email:
+            <a href="mailto:kashids961@gmail.com">kashids961@gmail.com</a>
+            | ☎️ Phone:
+            +91-9890157552
+        </p>
+        <p class="text-center">📧 Email:
+            <a href="mailto:akshayshingare@gmail.com">akshayshingare@gmail.com</a>
+            | ☎️ Phone:
+            +91-7020540649
+        </p>
     </div>
 
     <!-- Footer -->
     <footer class="text-center">
         <p class="mb-0">© 2025 ProductManagement. All Rights Reserved.</p>
     </footer>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Login</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="userType" class="form-label">Login As</label>
+                        <select class="form-select" id="userType" name="userType" required>
+                            <option value="">Select</option>
+                            <option value="/admin">Admin</option>
+                            <option value="/User">User</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/style.js"></script>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
