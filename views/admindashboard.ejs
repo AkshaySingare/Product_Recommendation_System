@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .dashboard-card {
+            transition: transform 0.2s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark bg-dark px-3">
+        <a class="navbar-brand" href="#">Product Management Admin</a>
+        <a href="/admin/logout" class="btn btn-outline-light">Logout</a>
+    </nav>
+
+    <!-- Dashboard Content -->
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Welcome Admin 👋</h2>
+
+        <div class="row justify-content-center g-4">
+            <!-- Manage Products -->
+            <div class="col-md-4">
+                <div class="card text-center dashboard-card shadow">
+                    <div class="card-body">
+                        <h4 class="card-title">📦 Manage Products</h4>
+                        <p class="card-text">View, edit, and delete products.</p>
+                        <a href="/manage-products" class="btn btn-success w-100">Go</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Product -->
+            <div class="col-md-4">
+                <div class="card text-center dashboard-card shadow">
+                    <div class="card-body">
+                        <h4 class="card-title">➕ Add Product</h4>
+                        <p class="card-text">Add a new product to the database.</p>
+                        <a href="/add-product" class="btn btn-primary w-100">Go</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile -->
+            <div class="col-md-4">
+                <div class="card text-center dashboard-card shadow">
+                    <div class="card-body">
+                        <h4 class="card-title">👨🏻‍💼 Profile</h4>
+                        <p class="card-text">View users profile details.</p>
+                        <a href="/" class="btn btn-secondary w-100">Go</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
