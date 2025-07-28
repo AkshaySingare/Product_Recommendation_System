@@ -11,26 +11,23 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
- document.addEventListener("DOMContentLoaded", function () {
-    const toggleBtn = document.getElementById("togglePassword");
-    const passwordField = document.getElementById("password");
+ document.addEventListener("DOMContentLoaded", () => {
+  const togglePassword = document.getElementById("togglePassword");
+  const passwordField = document.getElementById("password");
 
-    if (toggleBtn && passwordField) {
-        toggleBtn.addEventListener("click", function () {
-            const icon = this.querySelector("i");
-
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
-                icon.classList.remove("bi-eye");
-                icon.classList.add("bi-eye-slash");
-            } else {
-                passwordField.type = "password";
-                icon.classList.remove("bi-eye-slash");
-                icon.classList.add("bi-eye");
-            }
-        });
-    }
+  if (togglePassword && passwordField) {
+    togglePassword.addEventListener("click", () => {
+      const type = passwordField.getAttribute("type") === "password" ? "text" : "password";
+      passwordField.setAttribute("type", type);
+      togglePassword.innerHTML =
+        type === "password"
+          ? '<i class="bi bi-eye"></i>'
+          : '<i class="bi bi-eye-slash"></i>';
+    });
+  }
 });
+
+ 
 
 
 
