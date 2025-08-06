@@ -26,12 +26,12 @@
     <!-- Navbar -->
     <nav class="navbar navbar-dark bg-dark px-3">
         <a class="navbar-brand" href="#">Product Management Admin</a>
-        <a href="/admin/logout" class="btn btn-outline-light">Logout</a>
+        <a href="/adminlogout" class="btn btn-outline-light">Logout</a>
     </nav>
 
     <!-- Dashboard Content -->
     <div class="container mt-5">
-        <h2 class="text-center mb-4">Welcome Admin 👋</h2>
+        <h2 class="text-center mb-4">Welcome <%= adminname %> 👋</h2>
 
         <div class="row justify-content-center g-4">
             <!-- Manage Products -->
@@ -62,7 +62,7 @@
                     <div class="card-body">
                         <h4 class="card-title">👨🏻‍💼 Profile</h4>
                         <p class="card-text">View users profile details.</p>
-                        <a href="/" class="btn btn-secondary w-100">Go</a>
+                        <a href="/view-users" class="btn btn-secondary w-100">Go</a>
                     </div>
                 </div>
             </div>

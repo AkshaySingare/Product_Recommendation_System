@@ -89,18 +89,18 @@
                 <div class="card">
                     <div class="card-header">User Registration</div>
                     <div class="card-body">
-                        <form action="/saveemp" method="POST">
+                        <form action="/saveUser" method="POST">
                             <!-- User Name -->
                             <div class="mb-3">
                                 <label class="form-label">User Name</label>
-                                <input type="text" name="name" class="form-control" required
-                                    placeholder="Enter User Name" />
+                                <input type="text" name="name" class="form-control" required autocomplete="off"
+                                    autofocus placeholder="Enter User Name" />
                             </div>
 
                             <!-- Email -->
                             <div class="mb-3">
                                 <label class="form-label">Email</label>
-                                <input type="email" name="email" class="form-control" required
+                                <input type="email" name="email" class="form-control" required autocomplete="off"
                                     placeholder="Enter Email" />
 
                             </div>
@@ -109,14 +109,14 @@
                             <div class="mb-3">
                                 <label class="form-label">Contact</label>
                                 <input type="tel" name="contact" class="form-control" required pattern="[0-9]{10}"
-                                    placeholder="10-digit Contact Number" />
+                                    autocomplete="off" placeholder="10-digit Contact Number" />
 
                             </div>
 
                             <!-- Address -->
                             <div class="mb-3">
                                 <label class="form-label">Home Address</label>
-                                <textarea name="address" class="form-control" rows="2" required
+                                <textarea name="address" class="form-control" rows="2" required autocomplete="off"
                                     placeholder="Enter Home Address"></textarea>
 
                             </div>
@@ -124,7 +124,7 @@
                             <!-- Password -->
                             <div class="mb-3">
                                 <label class="form-label">Password</label>
-                                <input type="password" name="contact" class="form-control" required pattern="[0-9]{10}"
+                                <input type="password" name="password" class="form-control" required autocomplete="off"
                                     placeholder="Ente Password" />
 
                             </div>
