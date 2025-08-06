@@ -4,6 +4,7 @@ exports.Login = (req, res) => {
   res.render("userLogin");
 };
 
+
 exports.registration = (req, res) => {
   res.render("register");
 };
@@ -29,7 +30,9 @@ exports.userAuth = (req, res) => {
     if (err) throw err;
 
     if (results.length > 0) {
-      res.send("<h2>Login Successful</h2>");
+       req.session.userId = results[0].id;
+      const user = results[0];
+      res.render("userdashboard", { user });
     } else {
 res.send(`
   <html>
@@ -61,17 +64,20 @@ res.send(`
   });
 };
 
-exports.saveUser = (req, res) => {
-  const { name, email, contact, address, password } = req.body;
-  const admin = req.session.admin?.id;
 
-  const userData = { name, email, contact, address, password, admin };
+exports.userDashboard = (req, res) => {
+  const userId = req.session.userId;
 
-  userModel.saveUserDetails(userData, (err, result) => {
-    if (err) {
-      console.error("Error saving user:", err);
-      return res.send("Failed to register user.");
-    }
-    res.redirect("/view-users");
-  });
+  if (!userId) {
+    return res.redirect("/user"); // Redirect if not logged in
+  }
+
+  userModel.getUserById(userId)
+    .then((user) => {
+      res.render("userdashboard", { user });
+    })
+    .catch((err) => {
+      console.error("Error fetching user:", err);
+      res.status(500).send("Internal Server Error");
+    });
 };

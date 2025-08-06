@@ -9,14 +9,19 @@
 
 <body>
     <div class="container mt-5">
+        <a href="/dashboard" class="btn btn-secondary">Back to Dashboard</a>
         <h2>Users Added by <%= adminname %>
         </h2>
-        <table class="table table-bordered mt-3">
+        <table class="table table-striped mt-3">
             <thead class="table-dark">
                 <tr>
                     <th>#</th>
                     <th>Name</th>
                     <th>Email</th>
+                    <th>Contact</th>
+                    <th>Address</th>
+                    <th>created_at</th>
+                    <th>Delete</th>
                 </tr>
             </thead>
             <tbody>
@@ -31,17 +36,29 @@
                                     <%= index + 1 %>
                                 </td>
                                 <td>
-                                    <%= user.username %>
+                                    <%= user.name %>
                                 </td>
                                 <td>
                                     <%= user.email %>
+                                </td>
+                                <td>
+                                    <%= user.contact %>
+                                </td>
+                                <td>
+                                    <%= user.address %>
+                                </td>
+                                <td>
+                                    <%= user.created_at %>
+                                </td>
+                                <td>
+                                    <button>Delete</button>
                                 </td>
                             </tr>
                             <% }) %>
                                 <% } %>
             </tbody>
         </table>
-        <a href="/dashboard" class="btn btn-secondary">Back to Dashboard</a>
+
     </div>
 </body>
 

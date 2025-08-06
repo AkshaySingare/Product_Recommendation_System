@@ -35,10 +35,15 @@ exports.logout = (req, res) => {
 };
 
 exports.viewAdminUsers = (req, res) => {
-    const adminId = req.session.admin.id;
-
-    admodel.getAdminUsers(adminId, (err, users) => {
-        if (err) throw err;
-        res.render("viewUsers", { users, adminname: req.session.admin.username });
-    });
+    admodel.getAllUsers()
+        .then((users) => {
+            res.render("viewUsers", {
+                users,
+                adminname: req.session.admin?.username || "Admin"
+            });
+        })
+        .catch((err) => {
+            console.error("Error fetching users:", err);
+            res.status(500).send("Internal Server Error");
+        });
 };

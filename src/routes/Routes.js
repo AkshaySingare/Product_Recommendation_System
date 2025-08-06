@@ -15,7 +15,6 @@ router.get("/User", userCtrl.Login);
 router.post("/user-auth", userCtrl.userAuth);
 router.get("/register", userCtrl.registration);
 router.post("/saveUser", userCtrl.createUser);
-router.post("/saveUser", userCtrl.saveUser);
-
+router.get("/userdash",userCtrl.userDashboard);
 
 module.exports = router;
