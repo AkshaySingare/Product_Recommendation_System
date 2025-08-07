@@ -1,20 +1,30 @@
+
 const express = require("express");
-const session = require("express-session");
+let bodyparser=require("body-parser");
 const path = require("path");
-let db=require("../src/config/db.js");
-const app = express();
-const router = require("./routes/Routes");
+require("dotenv").config();
+let db=require("../src/config/db.js")
 
-app.set("view engine", "ejs");
+const productRouter = require("./routes/productRoutes"); 
+const categoryRouter = require("./routes/categoryRoutes");
+const userRouter = require("./routes/userRouter")
+const cartRoutes = require('./routes/cartRoutes');
+let cookie=require("cookie-parser");
 
-app.use(express.urlencoded({ extended: true }));
+let app = express();
+
+app.use(express.json());
+
+app.use(bodyparser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-app.use(session({
-    secret: "your_secret_key",
-    resave: false,
-    saveUninitialized: true
-}));
-app.use("/",router);
+
+// Attach routers
+app.use("/admin",productRouter);
+app.use("/admin",categoryRouter);
+
+// User router
+app.use("/",userRouter);
+// app.use("/cart",cartRoutes);
 
 module.exports=app;
