@@ -15,8 +15,6 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }));
-
-
 app.use("/",router);
 
 module.exports=app;
