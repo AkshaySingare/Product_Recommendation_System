@@ -1,11 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js"; // for navbar & modal
 import "bootstrap-icons/font/bootstrap-icons.css";
+import UserService from "../Service/UserService";
+import AdminService from "../Service/AdminService";
 
-function HomePage() {
+
+function HomePage({ token }) {
   const navigate = useNavigate();
+  // console.log("HomePage");
+  const API_URL = 'http://localhost:3000';
+
+  // // Check user are present are not if prasent then navigat UseDashBoard not then login page
+  // useEffect(() => {
+  //   if (token) navigate("/UserDashBoard");
+  // }, []);
+
+  // View Products
+  const [products, setProducts] = useState([]);
+  useEffect(() => {
+    AdminService.viweProduct()
+      .then((e) => {
+        // console.log(e);
+        let obj = Object.values(e.data);
+        setProducts(obj);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   const handleUserTypeChange = (e) => {
     const selected = e.target.value;
@@ -17,7 +39,10 @@ function HomePage() {
   return (
     <>
       {/* Navbar */}
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
+      <nav
+        id="main-navbar"
+        className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top"
+      >
         <div className="container-fluid px-5">
           {/* Logo */}
           <Link
@@ -30,21 +55,6 @@ function HomePage() {
           {/* Navbar items */}
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav ms-auto fw-bold">
-              {/* Products */}
-              <li className="nav-item">
-                <Link className="nav-link text-white" to="#products">
-                  <i className="bi bi-bag-fill me-1"></i> Products
-                </Link>
-              </li>
-
-              {/* Categories */}
-              <li className="nav-item">
-                <Link className="nav-link text-white" to="#categories">
-                  <i className="bi bi-grid-fill me-1"></i> Categories
-                </Link>
-              </li>
-
-              {/* Our Customers */}
               <li className="nav-item">
                 <a className="nav-link text-white" href="#customers">
                   <i className="bi bi-people-fill me-1"></i> Our Customers
@@ -61,7 +71,8 @@ function HomePage() {
               {/* Login */}
               <li className="nav-item d-flex justify-content-center align-items-center">
                 <NavLink to="/login" className="nav-link">
-                  <i className="bi bi-person-circle fs-5"></i>
+                  <i className="bi bi-person-circle fs-5"></i>{" "}
+                  <strong className="fs-5">Login</strong>
                 </NavLink>
               </li>
             </ul>
@@ -70,13 +81,13 @@ function HomePage() {
       </nav>
 
       {/* Hero Section */}
-      <div className="hero-section d-flex align-items-center justify-content-center text-center">
-        <div className="hero-text-box">
-          <h1 className="fw-bold display-4">Welcome to Product Management</h1>
+      <div className=" hero-section d-flex align-items-center justify-content-center text-center">
+        <div className="bg-transparent hero-text-box">
+          <h1 className="fw-bold display-5">Welcome to Product Management</h1>
           <p className="lead">
             Discover, shop, and manage your favorite products easily.
           </p>
-          <Link to="/shop" className="btn btn-primary btn-lg mt-3">
+          <Link to="/login" className="btn btn-primary btn-lg mt-3">
             <i className="bi bi-cart-fill me-2"></i> Start Shopping
           </Link>
         </div>
@@ -108,87 +119,58 @@ function HomePage() {
       {/* Featured Products Section */}
       <section id="products" className="py-5 bg-light">
         <div className="container">
-          <h2 className="section-title text-center mb-4">
+          <p className="fs-2 section-title text-center mb-4">
             🔥 Featured Products
-          </h2>
+            <strong className="fs-6 text-info text-center mb-4"> This Products Only for View </strong> 
+          </p>
+          
 
-          <div className="row g-4">
-            <div className="col-6 col-md-3">
-              <div className="card shadow-sm border-0 hover-card h-100">
-                <img
-                  src="https://assets.winni.in/product/primary/2023/3/83221.jpeg?dpr=1&w=500"
-                  className="card-img-top"
-                  alt="Product 1"
-                />
-                <div className="card-body text-center">
-                  <h5 className="card-title">Product 1</h5>
-                  <p className="card-text text-muted">
-                    Best quality at low price
-                  </p>
-                  <button className="btn btn-success btn-sm w-100">
-                    <i className="bi bi-cart"></i> Add to Cart
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="col-6 col-md-3">
-              <div className="card shadow-sm border-0 hover-card h-100">
-                <img
-                  src="https://jewelemarket.com/cdn/shop/products/11052859GL.jpg?v=1738995226"
-                  className="card-img-top"
-                  alt="Product 2"
-                />
-                <div className="card-body text-center">
-                  <h5 className="card-title">Product 2</h5>
-                  <p className="card-text text-muted">
-                    Best quality at low price
-                  </p>
-                  <button className="btn btn-success btn-sm w-100">
-                    <i className="bi bi-cart"></i> Add to Cart
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="col-6 col-md-3">
-              <div className="card shadow-sm border-0 hover-card h-100">
-                <img
-                  src="https://tiimg.tistatic.com/fp/1/007/788/commonally-cultivated-farm-fresh-red-tomato-vegetables-973.jpg"
-                  className="card-img-top"
-                  alt="Product 3"
-                />
-                <div className="card-body text-center">
-                  <h5 className="card-title">Product 3</h5>
-                  <p className="card-text text-muted">
-                    Best quality at low price
-                  </p>
-                  <button className="btn btn-success btn-sm w-100">
-                    <i className="bi bi-cart"></i> Add to Cart
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="col-6 col-md-3">
-              <div className="card shadow-sm border-0 hover-card h-100">
-                <img
-                  src="https://assets.winni.in/product/primary/2023/3/83221.jpeg?dpr=1&w=500"
-                  className="card-img-top"
-                  alt="Product 4"
-                />
-                <div className="card-body text-center">
-                  <h5 className="card-title">Product 4</h5>
-                  <p className="card-text text-muted">
-                    Best quality at low price
-                  </p>
-                  <button className="btn btn-success btn-sm w-100">
-                    <i className="bi bi-cart"></i> Add to Cart
-                  </button>
-                </div>
-              </div>
-            </div>
+<div className="row g-4">
+  {products.length === 0 ? (
+    <h4 className="text-center text-muted">No Products in App...</h4>
+  ) : (
+    products.map((item) => (
+      <div className="col-6 col-md-4 col-lg-3" key={item.id}>
+        <div className="card h-100 shadow-lg border-0 rounded-4 overflow-hidden hover-card">
+          <div className="card-img-container position-relative">
+            <img
+              src={`${API_URL}${item.image_url}`}
+              className="card-img-top product-img"
+              alt={item.name}
+            />
+            <span className="badge bg-danger position-absolute top-0 end-0 m-2 rounded-pill px-3 py-2 shadow">
+              {Math.round(((item.price - item.discount_price) / item.price) * 100)}% OFF
+            </span>
           </div>
+
+          <div className="card-body d-flex flex-column text-center p-3">
+            <h5 className="card-title fw-bold text-dark">{item.name}</h5>
+            <p className="text-muted small mb-2">{item.description}</p>
+
+            <p className="mb-1">
+              <span className="fw-bold text-primary me-2">
+                ₹{item.discount_price}
+              </span>
+              <span className="text-muted text-decoration-line-through">
+                ₹{item.price}
+              </span>
+            </p>
+
+            <p className="text-success fw-semibold">
+              Save ₹{item.price - item.discount_price}
+            </p>
+
+            <button className="btn btn-success mt-auto w-100 rounded-pill fw-semibold">
+              <i className="bi bi-cart me-2"></i> Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+    ))
+  )}
+</div>
+
+          
         </div>
       </section>
 
@@ -280,13 +262,12 @@ function HomePage() {
 
       {/* Contact */}
       <div id="contact" className="container my-5 bg-dark">
-        <h2 className="section-title text-center mb-4">📞 Get in Touch</h2>
+        <h2 className="section-title text-center pt-2 ">📞 Get in Touch</h2>
         <p className="lead text-muted text-center mb-5">
           Have questions? We'd love to hear from you. Reach us through any of
           the ways below.
         </p>
-
-        <div className="row g-4 text-center">
+        <div className="row g-4 text-center pb-4">
           {/* Address */}
           <div className="col-md-4">
             <div className="card shadow-sm p-4 h-100 border-0 hover-card">
@@ -322,73 +303,6 @@ function HomePage() {
                   +91 9890157552
                 </a>
               </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Social Media */}
-        <div className="text-center mt-5">
-          <h5 className="mb-3">Follow Us</h5>
-          <a
-            href="https://linkedin.com"
-            target="_blank"
-            rel="noreferrer"
-            className="mx-2 text-primary fs-4"
-          >
-            <i className="bi bi-linkedin"></i>
-          </a>
-          <a
-            href="https://github.com"
-            target="_blank"
-            rel="noreferrer"
-            className="mx-2 text-dark fs-4"
-          >
-            <i className="bi bi-github"></i>
-          </a>
-          <a
-            href="https://twitter.com"
-            target="_blank"
-            rel="noreferrer"
-            className="mx-2 text-info fs-4"
-          >
-            <i className="bi bi-twitter"></i>
-          </a>
-        </div>
-
-        {/* Contact Form */}
-        <div className="row justify-content-center mt-5">
-          <div className="col-md-8">
-            <div className="card shadow-sm p-4 border-0">
-              <h5 className="text-center mb-4">Send us a Message</h5>
-              <form>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Your Name"
-                    required
-                  />
-                </div>
-                <div className="mb-3">
-                  <input
-                    type="email"
-                    className="form-control"
-                    placeholder="Your Email"
-                    required
-                  />
-                </div>
-                <div className="mb-3">
-                  <textarea
-                    className="form-control"
-                    rows="4"
-                    placeholder="Your Message"
-                    required
-                  ></textarea>
-                </div>
-                <button type="submit" className="btn btn-primary w-100">
-                  <i className="bi bi-send-fill me-2"></i> Send Message
-                </button>
-              </form>
             </div>
           </div>
         </div>

@@ -133,7 +133,7 @@ function ManageCategory() {
         ) : (
           <div className="row g-3">
             {dbdata.map((cat, index) => (
-              <div key={cat.id} className="col-md-4">
+              <div key={cat.id} className="col-md-4" >
                 <div className="card border-0 shadow-sm rounded-4 h-100 hover-shadow">
                   <div className="card-body d-flex justify-content-between align-items-center">
                     {editIndex === index ? (
@@ -161,7 +161,7 @@ function ManageCategory() {
                       </div>
                     ) : (
                       <>
-                        <h6 className="fw-bold text-dark mb-0">{cat.name}</h6>
+                        <h6 className="fw-bold mb-0">{cat.name}</h6>
                         <div>
                           <button
                             className="btn btn-sm btn-outline-warning me-2 rounded-3"

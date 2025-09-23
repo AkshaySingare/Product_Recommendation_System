@@ -2,28 +2,81 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import React, { useState, useEffect, useContext } from "react";
 import { Dropdown } from "react-bootstrap";
+import { FaSignOutAlt } from "react-icons/fa";
 
 import AdminService from "../Service/AdminService";
 import UserService from "../Service/UserService";
 import UserContext from "../context/UserContext";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Button } from "bootstrap/dist/js/bootstrap.bundle.min";
+import { ThemeContext } from "../context/ThemeContext";
 
-export default function UserDashBord() {
-  //!  cart (+) icon and likes views add in db and pyment setting wishlist order page link
-
-  console.log(" Runing");
+export default function UserDashBoard() {
+  console.log("running", Math.random());
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState(null);
   const [refresh, setRefresh] = useState(0);
   const [showCart, setShowCart] = useState(false);
-  const [likes, setLikes] = useState({});
-  const [views, setViews] = useState({});
-  const [viewedProducts, setViewedProducts] = useState(new Set());
   const [categoryProducts, setCategoryProducts] = useState([]);
   const [searchProduct, setSearchProducts] = useState([]); //store products for searching
 
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 8;
+
+  // Take Image from WishList File and show here
+  const location = useLocation();
+
+  useEffect(() => {
+    console.log("UserDashboard rendered at", new Date().toISOString());
+
+    if (location.state?.item) {
+      //  console.log(location.state.item);
+      setSelectedProduct(location.state.item);
+    }
+  }, []);
+
+  // fetch User id andd Name that  Saved in Login page
+  const { user, setUser } = useContext(UserContext);
+  const navigate = useNavigate();
+  // console.log(user);
+
+  //Check user Valid or not ??
+  const [userData, setUserData] = useState(); //for pass data to checkout page
+  useEffect(() => {
+    // console.log(user.userId);
+    let token = localStorage.getItem("jwtToken");
+    let storedUser = JSON.parse(localStorage.getItem("user"));
+    //  alert(storedUser.id)
+
+    if (!storedUser.id || !token) {
+      alert("True");
+      localStorage.clear();
+      window.location.href = "/";
+    }
+    // console.log(user.userId," token ",token);
+    if (!token) {
+      window.location.href = "/";
+    } else {
+      UserService.getProfile(user.userId, token)
+        .then((e) => {
+          // console.log("Data  ", e.data);
+          setUserData(e.data[0]);
+          if(user.userId){
+            if (e.data[0].id !== user.userId) {
+              window.location.href = "/";
+            }
+          }
+        })
+        .catch((err) => {
+          if (err.status == 403) {
+            setUser(null);
+            localStorage.removeItem("jwtToken");
+            window.location.href = "/";
+          }
+          console.log(err);
+        });
+    }
+  }, []);
 
   // Load products + categories
   useEffect(() => {
@@ -41,16 +94,16 @@ export default function UserDashBord() {
 
   // Filter by category
   const categoryHandler = (id) => {
+    // console.log(id);
+
     UserService.fetchProduct(id)
       .then((res) => {
-        setProducts(res.data);
+        // console.log(res.data);
+        setSearchProducts(res.data);
         setCurrentPage(1);
       })
       .catch((err) => console.log(err));
   };
-
-  // fetch User id andd Name that  Saved in Login page
-  const { user } = useContext(UserContext);
 
   // Cart
   const [cartCount, setCartCount] = useState(0);
@@ -59,6 +112,12 @@ export default function UserDashBord() {
   const [cartProduct, setCartProduct] = useState([]);
 
   // Add to Cart
+  const [isCartAnimating, setIsCartAnimating] = useState(false);
+
+  const triggerCartAnimation = () => {
+    setIsCartAnimating(true);
+    setTimeout(() => setIsCartAnimating(false), 1000); // reset after animation
+  };
   const addToCart = (product) => {
     UserService.addInCart(user.userId, product.id)
       .then(() => {
@@ -70,7 +129,7 @@ export default function UserDashBord() {
       });
   };
 
-  //Fetched Carts Info From DB
+  // Fetched Carts Info From DB
   useEffect(() => {
     UserService.getCartData(user.userId)
       .then((res) => {
@@ -87,24 +146,25 @@ export default function UserDashBord() {
   // In Cart Descrese Product Quantity(Count)
   let descreseQuantity = (id) => {
     // console.log(id);
-    UserService.quantity(id,"minus")
-      .then((e) => {
+    UserService.quantity(id, "minus")
+      .then(() => {
         // console.log(e.data);x
         setCartRefresh((prev) => prev + 1);
       })
       .catch((err) => console.log(err));
   };
 
-  let increseQuantity=(id)=>{
+  let increseQuantity = (id) => {
     // console.log(id);
-    UserService.quantity(id,"plus").then((e)=>{
-      // console.log(e.data);
-      setCartRefresh((prev) => prev + 1);
-    }).catch((err)=>console.log(err));
+    UserService.quantity(id, "plus")
+      .then(() => {
+        // console.log(e.data);
+        setCartRefresh((prev) => prev + 1);
+      })
+      .catch((err) => console.log(err));
+  };
 
-  }
-
-  // Search-Bar Logic
+  //* Search-Bar Logic
   let searchBar = (val) => {
     // console.log(val);
     let searchVal = products.filter((item) =>
@@ -113,28 +173,91 @@ export default function UserDashBord() {
     setSearchProducts(searchVal);
   };
 
-  // Like Handler
+  //* Like Handler
+  const [likeRefresh, setLikeRefresh] = useState(0); //every time like are update then it should reflact
+  const [allLikes, setAllLikes] = useState([]);
+  useEffect(() => {
+    //Fetch All likes
+    UserService.fetchAllLikes()
+      .then((e) => {
+        // console.log(e);
+        const likesObject = Object.fromEntries(
+          e.data.map((item) => [item.product_id, item.liked])
+        );
+        setAllLikes(likesObject);
+      })
+      .catch((err) => console.log(err));
+  }, [likeRefresh]);
+
+  const [likes, setLikes] = useState({}); // store all likes product wise
+  useEffect(() => {
+    //fetch this ueser likes only.
+    UserService.showLike(user.userId)
+      .then((e) => {
+        // console.log(e);
+        const likesObject = Object.fromEntries(
+          e.data.map((item) => [item.product_id, item.liked])
+        );
+        // console.log(likesObject);
+        setLikes(likesObject);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [likeRefresh]);
+
   const toggleLike = (productId) => {
-    setLikes((prev) => {
-      if (prev[productId]) {
-        const updated = { ...prev };
-        delete updated[productId];
-        return updated;
-      } else {
-        return { ...prev, [productId]: true };
-      }
-    });
+    //  console.log("Likes  "+JSON.stringify(likes));
+    const isLiked = !!likes[productId]; // check current state
+    const msg = isLiked ? "delete" : "add";
+
+    UserService.managelike(user.userId, productId, msg)
+      .then(() => {
+        // console.log(e);
+        setLikeRefresh((prev) => prev + 1);
+      })
+      .catch((err) => console.log(err));
   };
 
-  // Track views
+  //* Track views
+  const [viewedProducts, setViewedProducts] = useState(new Set()); // save  here all view products
+  const [viewRefresh, setViewRefresh] = useState(0);
+  const [views, setViews] = useState({});
+
+  // fetch all products all views
   useEffect(() => {
+    UserService.fetchViews()
+      .then((e) => {
+        // console.log(e);
+        let viewObject = Object.fromEntries(
+          e.data.map((item) => [item.product_id, item.viewed])
+        );
+        setViews(viewObject);
+      })
+      .catch((err) => console.log(err));
+  }, [viewRefresh]);
+
+  const [selectedProduct, setSelectedProduct] = useState(null); // save those are selected
+
+  useEffect(() => {
+    // fetch user vise views
+    UserService.fetchUserview(user.userId)
+      .then((e) => {
+        // console.log(e);
+        setViewedProducts(new Set(e.data.map((item) => item.product_id))); //store the this user view products
+      })
+      .catch((err) => console.log(err));
+
+    //check product viewed or not if not then add view
     if (selectedProduct && !viewedProducts.has(selectedProduct.id)) {
       // console.log(selectedProduct);
-      setViews((prev) => ({
-        ...prev,
-        [selectedProduct.id]: (prev[selectedProduct.id] || 0) + 1,
-      }));
-      setViewedProducts((prev) => new Set(prev).add(selectedProduct.id));
+      UserService.addView(user.userId, selectedProduct.id)
+        .then(() => {
+          // console.log(e);
+          // console.log(products);
+          setViewRefresh((prev) => prev + 1);
+        })
+        .catch((err) => console.log(err));
     }
   }, [selectedProduct]);
 
@@ -142,7 +265,26 @@ export default function UserDashBord() {
   useEffect(() => {
     if (selectedProduct) {
       UserService.fetchProduct(selectedProduct.category_id)
-        .then((res) => setCategoryProducts(res.data))
+        .then((res) => {
+          //  let p=[];
+          UserService.recommendatedProduct(selectedProduct.id)
+            .then((e) => {
+              // console.log(e.data);
+              const prod = e.data.map((item) => item.recommended_product);
+              // console.log("Prod",prod)
+              let p = products.filter((item) => prod.includes(item.id));
+
+              const combined = [...p, ...res.data]; // Combine
+
+              // Remove duplicates based on product id
+              const uniqueProducts = Array.from(
+                new Map(combined.map((item) => [item.id, item])).values()
+              );
+
+              setCategoryProducts(uniqueProducts);
+            })
+            .catch((err) => console.log(err));
+        })
         .catch((err) => console.log(err));
     }
   }, [selectedProduct]);
@@ -163,62 +305,165 @@ export default function UserDashBord() {
   const handleNext = () => {
     if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
   };
-  // console.log(user.userId);
-  if (!user.userId) {
-    return <h2>Plese Login...</h2>;
-  }
+
+  // Dark Mode Logic
+  const { darkMode, setDarkMode } = useContext(ThemeContext);
+  const DarkModeButton = () => {};
+
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <>
-      <h4 className="text-grey">
-        Hello welcome Back{" "}
-        <span className="fs-3 fw-bold text-danger">{user.userName}</span>
-      </h4>
-      <div className="container py-4">
+      <div className="container-fluid py-4">
         {/* Header */}
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h3 className="fw-bold">Browse Products</h3>
+        {/* NAVBAR CONTAINER */}
+        <div className="d-flex flex-column gap-2 mb-4 px-2">
+          {/* ====== TOP ROW ====== */}
+          <div className="d-flex justify-content-between align-items-center">
+            {/* Left: Title */}
+            <h3 className="fw-bold text-primary mb-0">
+              <i className="bi bi-bag-check"></i> Browse Products
+            </h3>
 
-          <Dropdown align="end">
-            <Dropdown.Toggle variant="light" id="dropdown-basic">
-              <i className="bi bi-person-circle fs-4"></i>
-            </Dropdown.Toggle>
+            {/* Right: Desktop Tabs */}
+            <div className="d-none d-md-flex align-items-center gap-3">
+              {/* Dark Mode */}
+              <button
+                className={`btn rounded-circle shadow-sm ${
+                  darkMode ? "btn-light" : "btn-dark"
+                }`}
+                onClick={() => setDarkMode(!darkMode)}
+              >
+                {darkMode ? "☀" : "🌙"}
+              </button>
 
-            <Dropdown.Menu>
-              <Dropdown.Item>📦 Your Orders</Dropdown.Item>
-              <Dropdown.Item>❤️ Wishlist</Dropdown.Item>
-              <Dropdown.Item>👤 Profile</Dropdown.Item>
-              <Dropdown.Item>💳 Payment</Dropdown.Item>
-              <Dropdown.Item>⚙️ Settings</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
-        {/* Search Bar To Search Product Carts */}
-        <div>
-          <input
-            type="text"
-            name="search"
-            placeholder=" Search here.."
-            className="py-2 border-1 rounded-start w-75 ms-5 px-2 border-danger"
-            onChange={(e) => {
-              searchBar(e.target.value);
-            }}
-          />
-        </div>
-        {/* Cart Button */}
-        <div className="d-flex justify-content-end mb-3">
-          <button
-            className="btn btn-info fw-bold rounded-pill px-4"
-            onClick={() => setShowCart((prev) => !prev)}
-          >
-            <i className="bi bi-cart4"></i> Cart ({cartCount})
-          </button>
+              {/* Cart */}
+              <button
+                className={`btn btn-info fw-bold rounded-circle position-relative shadow-sm ${
+                  isCartAnimating ? "cart-bounce" : ""
+                }`}
+                onClick={() => setShowCart((prev) => !prev)}
+              >
+                <i className="fs-5 bi bi-cart4"></i>
+                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger shadow">
+                  {cartCount}
+                </span>
+              </button>
+
+              {/* Profile Dropdown */}
+              <Dropdown align="end">
+                <Dropdown.Toggle
+                  variant="light"
+                  id="dropdown-basic"
+                  className="shadow-sm rounded-circle px-2"
+                >
+                  <i className="bi bi-person-circle fs-4 text-primary"></i>
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item onClick={() => navigate("/orders")}>
+                    📦 Your Orders
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => navigate("/wishList")}>
+                    ❤️ Wishlist
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => navigate("/profile")}>
+                    👤 Profile
+                  </Dropdown.Item>
+                  <Dropdown.Divider />
+                  <Dropdown.Item
+                    className="text-danger fw-bold"
+                    onClick={() => {
+                      setUser(null);
+                      localStorage.clear();
+                      window.location.href = "/";
+                    }}
+                  >
+                    <FaSignOutAlt /> Log Out
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+
+            {/* Right: Mobile Menu Button */}
+            <div className="d-md-none">
+              <button
+                className="btn btn-outline-primary"
+                onClick={() => setMenuOpen(!menuOpen)}
+              >
+                <i className="bi bi-list fs-4"></i>
+              </button>
+            </div>
+          </div>
+
+          {/* ====== MOBILE MENU (ABOVE SEARCH BAR) ====== */}
+          {menuOpen && (
+            <div className="d-md-none bg-white shadow rounded p-3 animate__animated animate__fadeInDown">
+              <button
+                className={`btn w-100 mb-2 ${
+                  darkMode ? "btn-light" : "btn-dark"
+                }`}
+                onClick={() => setDarkMode(!darkMode)}
+              >
+                {darkMode ? "☀ Light Mode" : "🌙 Dark Mode"}
+              </button>
+
+              <button
+                className="btn btn-info w-100 fw-bold rounded-pill mb-2 position-relative"
+                onClick={() => setShowCart((prev) => !prev)}
+              >
+                <i className="bi bi-cart4 me-2"></i> Cart
+                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger shadow">
+                  {cartCount}
+                </span>
+              </button>
+
+              <button
+                className="btn btn-outline-primary w-100 mb-2"
+                onClick={() => navigate("/orders")}
+              >
+                📦 Your Orders
+              </button>
+              <button
+                className="btn btn-outline-primary w-100 mb-2"
+                onClick={() => navigate("/wishList")}
+              >
+                ❤️ Wishlist
+              </button>
+              <button
+                className="btn btn-outline-primary w-100 mb-2"
+                onClick={() => navigate("/profile")}
+              >
+                👤 Profile
+              </button>
+              <button
+                className="btn btn-outline-danger w-100 fw-bold"
+                onClick={() => {
+                  setUser(null);
+                  localStorage.clear();
+                  window.location.href = "/";
+                }}
+              >
+                <FaSignOutAlt /> Log Out
+              </button>
+            </div>
+          )}
+
+          {/* ====== SEARCH BAR ====== */}
+          <div>
+            <input
+              type="text"
+              name="search"
+              placeholder="🔎 Search your favorite products..."
+              className="form-control border-primary shadow-sm rounded-pill px-4"
+              onChange={(e) => searchBar(e.target.value)}
+            />
+          </div>
         </div>
 
         {/* Categories */}
         <nav className="d-flex flex-wrap gap-2 mb-4">
           <button
-            className="btn btn-outline-dark btn-sm"
+            className="btn btn-sm rounded-pill shadow-sm btn-custom fw-bold"
             onClick={() => setRefresh((r) => r + 1)}
           >
             All Products
@@ -226,7 +471,7 @@ export default function UserDashBord() {
           {categories.map((cat) => (
             <button
               key={cat.id}
-              className="btn btn-outline-primary btn-sm"
+              className="btn btn-outline-primary btn-sm rounded-pill shadow-sm"
               onClick={() => categoryHandler(cat.id)}
             >
               {cat.name}
@@ -235,37 +480,68 @@ export default function UserDashBord() {
         </nav>
 
         {/* Product Grid */}
-        <div className="row">
+        <div className="row g-4">
           {currentProducts.length === 0 ? (
             <p className="text-center text-muted">Loading products...</p>
           ) : (
             currentProducts.map((p) => (
               <div className="col-6 col-md-3 mb-4" key={p.id}>
-                <div className="card shadow-sm h-100 border-0">
-                  <img
-                    src={`http://localhost:3000${p.image_url}`}
-                    className="card-img-top rounded"
-                    style={{ height: "160px", objectFit: "cover" }}
-                    alt={p.name}
-                    onClick={() => setSelectedProduct(p)}
-                  />
-                  <div className="card-body text-center">
-                    <h6 className="fw-bold">{p.name}</h6>
+                <div className="card shadow border-0 h-100 position-relative hover-card rounded-4">
+                  {/* Image container */}
+                  <div
+                    className="card-img-container rounded-top"
+                    style={{
+                      height: "200px",
+                      overflow: "hidden",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <img
+                      src={`http://localhost:3000${p.image_url}`}
+                      alt={p.name}
+                      className="w-100 h-100"
+                      style={{
+                        objectFit: "contain",
+                        transition: "transform 0.3s",
+                      }}
+                      onClick={() => setSelectedProduct(p)}
+                      onMouseOver={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.05)")
+                      }
+                      onMouseOut={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
+                    />
+                  </div>
+
+                  {/* Discount badge */}
+                  <span className="badge bg-danger position-absolute top-0 end-0 m-2 rounded-pill px-3 py-2 shadow">
+                    {Math.round(((p.price - p.discount_price) / p.price) * 100)}
+                    % OFF
+                  </span>
+
+                  {/* Card body */}
+                  <div className="card-body text-center d-flex flex-column">
+                    <h6 className="fw-bold text-truncate">{p.name}</h6>
                     <p className="text-success fw-bold mb-1">
                       ₹{p.discount_price}{" "}
                       <span className="text-muted text-decoration-line-through ms-1">
                         ₹{p.price}
                       </span>
                     </p>
-                    <div className="d-flex justify-content-between align-items-center">
+
+                    <div className="d-flex justify-content-between align-items-center mt-auto">
                       <button
-                        className="btn btn-sm btn-success"
-                        onClick={() => addToCart(p)}
+                        className="btn btn-sm btn-success shadow-sm rounded-pill px-3"
+                        onClick={() => {
+                          addToCart(p);
+                          triggerCartAnimation();
+                        }}
                       >
-                        <i className="bi bi-cart-plus"></i> Add
+                        <i className="bi bi-cart-plus me-1"></i> Add
                       </button>
                       <button
-                        className={`btn btn-sm ${
+                        className={`btn btn-sm shadow-sm rounded-circle ${
                           likes[p.id] ? "btn-danger" : "btn-outline-danger"
                         }`}
                         onClick={() => toggleLike(p.id)}
@@ -283,7 +559,7 @@ export default function UserDashBord() {
         {/* Pagination */}
         {totalPages > 1 && (
           <nav className="d-flex justify-content-center mt-3">
-            <ul className="pagination">
+            <ul className="pagination pagination-sm">
               <li
                 className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
               >
@@ -352,16 +628,22 @@ export default function UserDashBord() {
                       Save ₹
                       {selectedProduct.price - selectedProduct.discount_price}
                     </h6>
+                    //todo Incomplete to show likes using key and values
                     <p className="text-secondary">
                       👁 Views: {views[selectedProduct.id] || 0} | ❤️ Likes:{" "}
-                      {likes[selectedProduct.id] ? 1 : 0}
+                      {allLikes[selectedProduct.id]
+                        ? allLikes[selectedProduct.id]
+                        : 0}
                     </p>
-
                     <button
                       className="btn btn-success btn-lg mt-3"
-                      onClick={() => addToCart(selectedProduct)}
+                      onClick={() => {
+                        addToCart(selectedProduct);
+                        setSelectedProduct(null);
+                        triggerCartAnimation();
+                      }}
                     >
-                      <i className="bi bi-cart-plus"></i> Buy Now
+                      <i className="bi bi-cart-plus"></i> Add Cart
                     </button>
                   </div>
                 </div>
@@ -369,7 +651,7 @@ export default function UserDashBord() {
                 {/* More products from same category */}
                 <hr />
                 <h6 className="fw-bold mb-3">
-                  More in {selectedProduct.category_name}
+                  More Similar... {selectedProduct.category_name}
                 </h6>
                 <div className="row">
                   {categoryProducts
@@ -384,9 +666,10 @@ export default function UserDashBord() {
                           <img
                             src={`http://localhost:3000${p.image_url}`}
                             className="card-img-top rounded"
-                            style={{ height: "150px", objectFit: "cover" }}
+                            style={{ maxHeight: "300px", objectFit: "contain" }}
                             alt={p.name}
                           />
+
                           <div className="card-body text-center p-2">
                             <h6 className="fw-bold small mb-0">{p.name}</h6>
                             <small className="text-success fw-bold">
@@ -491,7 +774,19 @@ export default function UserDashBord() {
                   Close
                 </button>
                 {cartProduct.length > 0 && (
-                  <button className="btn btn-success">
+                  <button
+                    className="btn btn-success"
+                    onClick={() =>
+                      navigate(`/checkout`, {
+                        state: {
+                          userId: user.userId,
+                          name: user.userName,
+                          userData: userData,
+                          cart: cartProduct,
+                        },
+                      })
+                    }
+                  >
                     <i className="bi bi-bag-check"></i> Checkout
                   </button>
                 )}

@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState,useContext } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import UserService from "../Service/UserService";
+import UserContext from "../context/UserContext"
 
 function SignupPage() {
   const navigate = useNavigate();
@@ -19,6 +20,9 @@ function SignupPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+    //fetched that function to set userId and Name
+  const { setUser } = useContext(UserContext);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
@@ -27,8 +31,13 @@ function SignupPage() {
     }
     let promise = UserService.registerUser(formData);
     promise
-      .then(() => {
-        navigate("/UserDashBord");
+      .then((e) => {
+        // console.log(e.data[0])
+        setUser({
+          userId:e.data[0].id,
+          userName:e.data[0].name
+        });
+        navigate("/login");
       })
       .catch((err) => {
         setMsg(err.data);

@@ -34,28 +34,29 @@ exports.getCartInfo = (req, res) => {
 
 exports.reduceQuantity = (req, res) => {
   let { id, msg } = req.params;
-  cartItem.fetchCartById(id).then((result) => {
-    // console.log(result);
-    if (result[0].quantity <= 1) {
-      cartItem.deletById(id).then((result) => res.send("deleted")).catch((err) => console.log(err));
-    } else {
+
+  cartItem.fetchCartById(id)
+    .then((result) => {
       if (msg == "minus") {
-        cartItem.descreseQuantity(id).then((result) => {
-          // console.log(result);
-          res.send("Quantity Descresed")
-        }).catch((err) => console.log(err));
+        if (result[0].quantity <= 1) {
+          cartItem.deletById(id)
+            .then(() => res.send("deleted"))
+            .catch((err) => console.log(err));
+        } else {
+          cartItem.descreseQuantity(id)
+            .then(() => res.send("Quantity Decreased"))
+            .catch((err) => console.log(err));
+        }
+      } else {
+        cartItem.increseQuantity(id)
+          .then(() => res.send("Quantity Increased"))
+          .catch((err) => console.log(err));
       }
-      else {
-        cartItem.increseQuantity(id).then((result) => {
-          res.send("Quantity Incresed")
-        }).catch((err) => console.log(err));
-      }
-    }
-  }).catch((err) => {
-    console.log(err);
-  });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
-
-}
 
 

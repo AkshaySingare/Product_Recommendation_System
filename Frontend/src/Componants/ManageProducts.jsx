@@ -125,90 +125,100 @@ const ProductManager = () => {
       })
       .catch((err) => console.log(err));
   };
+  const [search, setSearch] = useState("");
+
+  // Filter logic
+  const filteredProducts = products.filter(
+    (p) =>
+      p.name.toLowerCase().includes(search.toLowerCase()) ||
+      p.description.toLowerCase().includes(search.toLowerCase()) ||
+      (p.categoryName &&
+        p.categoryName.toLowerCase().includes(search.toLowerCase()))
+  );
 
   return (
-    <div className="container my-4">
-      <h2 className="text-center fw-bold mb-3">📦 Product Manager</h2>
-      <strong className="mb-2 mt-2 d-block bg-success text-center text-warning fs-5 rounded-pill mx-5">
-        {msg}
-      </strong>
+<div className="container my-4">
+  <h2 className="text-center fw-bold mb-3">📦 Product Manager</h2>
+  {msg && (
+    <strong className="mb-3 d-block bg-success text-center text-warning fs-5 rounded-pill mx-auto px-3">
+      {msg}
+    </strong>
+  )}
 
-      <div className="d-flex justify-content-end mb-3">
-        <Button variant="success" onClick={handleShow} className="shadow">
-          <FaPlusCircle className="me-3 my-2" /> Add Product
-        </Button>
-      </div>
+  {/* Search + Add Button */}
+  <div className="d-flex flex-column flex-md-row justify-content-between mb-3 gap-2">
+    <input
+      type="text"
+      name="search"
+      className="form-control flex-grow-1"
+      placeholder="🔍 Search products..."
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+    />
+    <Button variant="success" onClick={handleShow} className="shadow mt-2 mt-md-0">
+      <FaPlusCircle className="me-2" /> Add Product
+    </Button>
+  </div>
 
-      {/* Product Cards */}
-      <Row className="mt-4">
-        {products.length === 0 && (
-          <p className="text-center w-100 mt-3">No products added yet.</p>
-        )}
-        {products.map((p) => (
-          <Col md={4} sm={6} xs={12} key={p.id} className="mb-4">
-            <Card className="shadow-lg glass-card h-100">
-              <Card.Img
-                variant="top"
-                src={
-                  p.image instanceof File
-                    ? URL.createObjectURL(p.image)
-                    : p.image || `http://localhost:3000${p.image_url}`
-                }
-                style={{
-                  height: "220px",
-                  objectFit: "cover",
-                  borderTopLeftRadius: "16px",
-                  borderTopRightRadius: "16px",
-                }}
-              />
-              <Card.Body>
-                <Card.Title className="fw-bold">{p.name}</Card.Title>
-                <Card.Text>
-                  <span className="text-muted">{p.description}</span>
-                  <br />
-                  <strong>💰 Price:</strong> ₹{p.price}
-                  <br />
-                  <strong>🏷 Discount:</strong>{" "}
-                  {p.discount_price ? `₹${p.discount_price}` : "-"}
-                  <br />
-                  <strong>📂 Category:</strong> {p.categoryName}
-                </Card.Text>
-              </Card.Body>
-              <Card.Footer className="d-flex justify-content-between">
-                <OverlayTrigger overlay={<Tooltip>Edit</Tooltip>}>
-                  <Button
-                    variant="outline-warning"
-                    onClick={() => handleEdit(p)}
-                    className="rounded-circle"
-                  >
-                    <FaEdit />
-                  </Button>
-                </OverlayTrigger>
-                <OverlayTrigger overlay={<Tooltip>Delete</Tooltip>}>
-                  <Button
-                    variant="outline-danger"
-                    onClick={() => handleDelete(p.id)}
-                    className="rounded-circle"
-                  >
-                    <FaTrash />
-                  </Button>
-                </OverlayTrigger>
-              </Card.Footer>
-            </Card>
-          </Col>
-        ))}
-      </Row>
+  {/* Product Cards */}
+  <Row className="g-3">
+    {filteredProducts.length === 0 && (
+      <p className="text-center w-100 mt-3">No products added yet.</p>
+    )}
+    {filteredProducts.map((p) => (
+      <Col key={p.id} xs={12} sm={6} md={4} lg={3}>
+        <Card className="glass-card shadow-lg h-100">
+          <Card.Img
+            variant="top"
+            src={
+              p.image instanceof File
+                ? URL.createObjectURL(p.image)
+                : p.image || `http://localhost:3000${p.image_url}`
+            }
+            style={{ maxHeight: "200px", objectFit: "contain" }}
+          />
+          <Card.Body>
+            <Card.Title className="fw-bold">{p.name}</Card.Title>
+            <Card.Text>
+              <span className="text-muted">{p.description}</span>
+              <br />
+              <strong>💰 Price:</strong> ₹{p.price} <br />
+              <strong>🏷 Discount:</strong>{" "}
+              {p.discount_price ? `₹${p.discount_price}` : "-"} <br />
+              <strong>📂 Category:</strong> {p.categoryName}
+            </Card.Text>
+          </Card.Body>
+          <Card.Footer className="d-flex justify-content-between gap-2">
+            <Button
+              variant="outline-warning"
+              onClick={() => handleEdit(p)}
+              className="rounded-circle flex-grow-1 d-flex align-items-center justify-content-center"
+            >
+              <FaEdit />
+            </Button>
+            <Button
+              variant="outline-danger"
+              onClick={() => handleDelete(p.id)}
+              className="rounded-circle flex-grow-1 d-flex align-items-center justify-content-center"
+            >
+              <FaTrash />
+            </Button>
+          </Card.Footer>
+        </Card>
+      </Col>
+    ))}
+  </Row>
 
-      {/* Modal */}
-      <Modal show={show} onHide={handleClose} centered>
-        <Modal.Header closeButton className="bg-primary text-white">
-          <Modal.Title>
-            {editProduct ? "✏️ Edit Product" : "➕ Add Product"}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={handleSave}>
-            <Form.Group className="mb-3">
+  {/* ===== MODAL (already responsive) ===== */}
+  <Modal show={show} onHide={handleClose} centered>
+    <Modal.Header closeButton className="bg-primary text-white">
+      <Modal.Title>{editProduct ? "✏️ Edit Product" : "➕ Add Product"}</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+      <Form onSubmit={handleSave}>
+        <Row className="g-3">
+          <Col xs={12} md={6}>
+            <Form.Group>
               <Form.Label>Product Name</Form.Label>
               <InputGroup>
                 <InputGroup.Text>
@@ -221,27 +231,12 @@ const ProductManager = () => {
                   onChange={handleChange}
                   placeholder="Enter product name"
                   required
-                  minLength={1}
-                  maxLength={50}
                 />
               </InputGroup>
             </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Description</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                placeholder="Enter description"
-                required
-                minLength={4}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
+          </Col>
+          <Col xs={12} md={6}>
+            <Form.Group>
               <Form.Label>Price</Form.Label>
               <InputGroup>
                 <InputGroup.Text>
@@ -258,8 +253,25 @@ const ProductManager = () => {
                 />
               </InputGroup>
             </Form.Group>
+          </Col>
+        </Row>
 
-            <Form.Group className="mb-3">
+        <Form.Group className="my-3">
+          <Form.Label>Description</Form.Label>
+          <Form.Control
+            as="textarea"
+            rows={3}
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            placeholder="Enter description"
+            required
+          />
+        </Form.Group>
+
+        <Row className="g-3">
+          <Col xs={12} md={6}>
+            <Form.Group>
               <Form.Label>Discount Price</Form.Label>
               <InputGroup>
                 <InputGroup.Text>
@@ -275,8 +287,9 @@ const ProductManager = () => {
                 />
               </InputGroup>
             </Form.Group>
-
-            <Form.Group className="mb-3">
+          </Col>
+          <Col xs={12} md={6}>
+            <Form.Group>
               <Form.Label>Category</Form.Label>
               <Form.Select
                 name="category"
@@ -292,59 +305,62 @@ const ProductManager = () => {
                 ))}
               </Form.Select>
             </Form.Group>
+          </Col>
+        </Row>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Upload Image</Form.Label>
-              <InputGroup>
-                <InputGroup.Text>
-                  <FaImage />
-                </InputGroup.Text>
-                <Form.Control
-                  type="file"
-                  name="image"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  required={!editProduct}
-                />
-              </InputGroup>
-              {formData.image && (
-                <p className="mt-2 text-success">📁 {formData.image.name}</p>
-              )}
-            </Form.Group>
+        <Form.Group className="my-3">
+          <Form.Label>Upload Image</Form.Label>
+          <InputGroup>
+            <InputGroup.Text>
+              <FaImage />
+            </InputGroup.Text>
+            <Form.Control
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={handleFileChange}
+              required={!editProduct}
+            />
+          </InputGroup>
+          {formData.image && (
+            <p className="mt-2 text-success">📁 {formData.image.name}</p>
+          )}
+        </Form.Group>
 
-            <Button type="submit" variant="success" className="w-100">
-              Save Product
-            </Button>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Cancel
-          </Button>
-        </Modal.Footer>
-      </Modal>
+        <Button type="submit" variant="success" className="w-100">
+          Save Product
+        </Button>
+      </Form>
+    </Modal.Body>
+    <Modal.Footer>
+      <Button variant="secondary" onClick={handleClose}>
+        Cancel
+      </Button>
+    </Modal.Footer>
+  </Modal>
 
-      {/* Styles */}
-      <style>{`
-        .glass-card {
-          border-radius: 16px;
-          background: rgba(255, 255, 255, 0.9);
-          backdrop-filter: blur(12px);
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .glass-card:hover {
-          transform: translateY(-6px);
-          box-shadow: 0px 8px 25px rgba(0,0,0,0.15);
-        }
-        .rounded-circle {
-          width: 40px;
-          height: 40px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-      `}</style>
-    </div>
+  {/* Glass card style */}
+  <style>{`
+    .glass-card {
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .glass-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0px 8px 25px rgba(0,0,0,0.15);
+    }
+    .rounded-circle {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  `}</style>
+</div>
+
   );
 };
 

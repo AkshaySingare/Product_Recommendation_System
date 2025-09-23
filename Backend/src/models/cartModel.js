@@ -29,7 +29,7 @@ exports.addInCart = (userId, productId) => {
 
 exports.getCartsData = (userId) => {
       return new Promise((resolve, rejects) => {
-            db.query('select u.name as "userName",p.name,p.image_url,p.discount_price,p.price,c.id,c.quantity from products p inner join Carts c on c.product_id=p.id inner join users u on u.id=c.user_id where user_id=?', [userId], (err, row) => {
+            db.query('select u.name as "userName",p.id as "product_id",p.name,p.image_url,p.discount_price,p.price,c.id,c.quantity from products p inner join Carts c on c.product_id=p.id inner join users u on u.id=c.user_id where user_id=?', [userId], (err, row) => {
                   if (err) rejects(err);
                   else resolve(row);
             });
