@@ -84,7 +84,7 @@ exports.allViews = () => {
 }
 exports.userView = (userId) => {
   return new Promise((resolve, rejects) => {
-    db.query("select  product_id from user_interactions where user_id=?", [userId], (err, row) => {
+    db.query("select  product_id from user_interactions where user_id=? and action_id=1", [userId], (err, row) => {
       if (err) rejects(err);
       else resolve(row);
     });

@@ -12,7 +12,8 @@ import { Button } from "bootstrap/dist/js/bootstrap.bundle.min";
 import { ThemeContext } from "../context/ThemeContext";
 
 export default function UserDashBoard() {
-  console.log("running", Math.random());
+
+  // console.log("running", Math.random());
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [refresh, setRefresh] = useState(0);
@@ -27,7 +28,7 @@ export default function UserDashBoard() {
   const location = useLocation();
 
   useEffect(() => {
-    console.log("UserDashboard rendered at", new Date().toISOString());
+    // console.log("UserDashboard rendered at", new Date().toISOString());
 
     if (location.state?.item) {
       //  console.log(location.state.item);
@@ -45,14 +46,14 @@ export default function UserDashBoard() {
   useEffect(() => {
     // console.log(user.userId);
     let token = localStorage.getItem("jwtToken");
-    let storedUser = JSON.parse(localStorage.getItem("user"));
-    //  alert(storedUser.id)
+    // let storedUser = JSON.parse(localStorage.getItem("user"));
+    // //  alert(storedUser.id)
 
-    if (!storedUser.id || !token) {
-      alert("True");
-      localStorage.clear();
-      window.location.href = "/";
-    }
+    // if (!storedUser.id || !token) {
+    //   alert("True");
+    //   localStorage.clear();
+    //   window.location.href = "/";
+    // }
     // console.log(user.userId," token ",token);
     if (!token) {
       window.location.href = "/";
@@ -232,6 +233,8 @@ export default function UserDashBoard() {
         let viewObject = Object.fromEntries(
           e.data.map((item) => [item.product_id, item.viewed])
         );
+        // console.log("viewObject ")
+        // console.log(viewObject)
         setViews(viewObject);
       })
       .catch((err) => console.log(err));
@@ -240,26 +243,31 @@ export default function UserDashBoard() {
   const [selectedProduct, setSelectedProduct] = useState(null); // save those are selected
 
   useEffect(() => {
+    // console.log("selectedProduct ");
+    // console.log(selectedProduct);
     // fetch user vise views
     UserService.fetchUserview(user.userId)
       .then((e) => {
         // console.log(e);
         setViewedProducts(new Set(e.data.map((item) => item.product_id))); //store the this user view products
+    //  console.log(viewedProducts)
       })
       .catch((err) => console.log(err));
-
-    //check product viewed or not if not then add view
+      
+   //check product viewed or not if not then add view
     if (selectedProduct && !viewedProducts.has(selectedProduct.id)) {
       // console.log(selectedProduct);
       UserService.addView(user.userId, selectedProduct.id)
         .then(() => {
           // console.log(e);
-          // console.log(products);
+          // console.log(selectedProduct.id);
           setViewRefresh((prev) => prev + 1);
         })
         .catch((err) => console.log(err));
     }
   }, [selectedProduct]);
+  
+
 
   // Load category products when modal opens
   useEffect(() => {
@@ -280,7 +288,6 @@ export default function UserDashBoard() {
               const uniqueProducts = Array.from(
                 new Map(combined.map((item) => [item.id, item])).values()
               );
-
               setCategoryProducts(uniqueProducts);
             })
             .catch((err) => console.log(err));
@@ -485,7 +492,9 @@ export default function UserDashBoard() {
             <p className="text-center text-muted">Loading products...</p>
           ) : (
             currentProducts.map((p) => (
+              
               <div className="col-6 col-md-3 mb-4" key={p.id}>
+              
                 <div className="card shadow border-0 h-100 position-relative hover-card rounded-4">
                   {/* Image container */}
                   <div
@@ -593,6 +602,7 @@ export default function UserDashBoard() {
           style={{ display: "inline-block", background: "rgba(0,0,0,0.5)" }}
         >
           <div className="modal-dialog modal-xl modal-dialog-centered">
+            {/* {console.log("hello")} */}
             <div className="modal-content shadow-lg">
               <div className="modal-header">
                 <h5 className="fw-bold">{selectedProduct.name}</h5>

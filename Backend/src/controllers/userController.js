@@ -132,6 +132,7 @@ exports.fetchLikes = (req, res) => {
 //  Product Views
 exports.addView = (req, res) => {
   let { userId, productId } = req.body;
+  // console.log(userId,productId);
   usermodel.addNewView(userId, productId).then((e) => {
     // console.log(e);
     res.send(e);
@@ -189,7 +190,7 @@ exports.changePassword = (req, res) => {
   const { oldPassword, newPassword } = req.body;
   // console.log(oldPassword+" newpassword  "+newPassword)
   let enpass = bcrypt.hashSync(newPassword, 8);
-  console.log(enpass);
+  // console.log(enpass);
 
   usermodel.checkusersById(id)
     .then((pass) => {
@@ -201,7 +202,7 @@ exports.changePassword = (req, res) => {
         res.send("Old password incorrect");
       } else {
         usermodel.updatePassword(id, enpass).then((e) => {
-          console.log(e);
+          // console.log(e);
           res.send("Password updated successfully");
         }).catch((err) => {
           console.log(err);
@@ -328,7 +329,7 @@ exports.getTopProductRecommendations = async (req, res) => {
   if (!productId) return res.status(400).json({ error: 'productId is required' });
 
   usermodel.getProductRecommendations(productId).then((e) => {
-    console.log(e);
+    // console.log(e);
     res.send(e);
   }).catch((err) => {
     console.log(err);
