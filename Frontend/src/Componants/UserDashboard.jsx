@@ -12,7 +12,6 @@ import { Button } from "bootstrap/dist/js/bootstrap.bundle.min";
 import { ThemeContext } from "../context/ThemeContext";
 
 export default function UserDashBoard() {
-
   // console.log("running", Math.random());
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -62,7 +61,7 @@ export default function UserDashBoard() {
         .then((e) => {
           // console.log("Data  ", e.data);
           setUserData(e.data[0]);
-          if(user.userId){
+          if (user.userId) {
             if (e.data[0].id !== user.userId) {
               window.location.href = "/";
             }
@@ -175,13 +174,14 @@ export default function UserDashBoard() {
   };
 
   //* Like Handler
+
   const [likeRefresh, setLikeRefresh] = useState(0); //every time like are update then it should reflact
   const [allLikes, setAllLikes] = useState([]);
   useEffect(() => {
     //Fetch All likes
     UserService.fetchAllLikes()
       .then((e) => {
-        // console.log(e);
+        // console.log("All Product Likes  ",e);
         const likesObject = Object.fromEntries(
           e.data.map((item) => [item.product_id, item.liked])
         );
@@ -195,7 +195,7 @@ export default function UserDashBoard() {
     //fetch this ueser likes only.
     UserService.showLike(user.userId)
       .then((e) => {
-        // console.log(e);
+        // console.log("Particular user Likes  ",e);
         const likesObject = Object.fromEntries(
           e.data.map((item) => [item.product_id, item.liked])
         );
@@ -213,8 +213,8 @@ export default function UserDashBoard() {
     const msg = isLiked ? "delete" : "add";
 
     UserService.managelike(user.userId, productId, msg)
-      .then(() => {
-        // console.log(e);
+      .then((e) => {
+        // console.log("Toggele Like    ",e);
         setLikeRefresh((prev) => prev + 1);
       })
       .catch((err) => console.log(err));
@@ -250,11 +250,11 @@ export default function UserDashBoard() {
       .then((e) => {
         // console.log(e);
         setViewedProducts(new Set(e.data.map((item) => item.product_id))); //store the this user view products
-    //  console.log(viewedProducts)
+        //  console.log(viewedProducts)
       })
       .catch((err) => console.log(err));
-      
-   //check product viewed or not if not then add view
+
+    //check product viewed or not if not then add view
     if (selectedProduct && !viewedProducts.has(selectedProduct.id)) {
       // console.log(selectedProduct);
       UserService.addView(user.userId, selectedProduct.id)
@@ -266,8 +266,6 @@ export default function UserDashBoard() {
         .catch((err) => console.log(err));
     }
   }, [selectedProduct]);
-  
-
 
   // Load category products when modal opens
   useEffect(() => {
@@ -492,9 +490,7 @@ export default function UserDashBoard() {
             <p className="text-center text-muted">Loading products...</p>
           ) : (
             currentProducts.map((p) => (
-              
               <div className="col-6 col-md-3 mb-4" key={p.id}>
-              
                 <div className="card shadow border-0 h-100 position-relative hover-card rounded-4">
                   {/* Image container */}
                   <div

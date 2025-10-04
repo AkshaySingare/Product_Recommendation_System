@@ -35,7 +35,7 @@ exports.userNameCheck = (key, val) => {
 //likes
 exports.showslike = (userId) => {
   return new Promise((resolve, rejects) => {
-    db.query("select product_id, action_id as 'liked' from user_interactions where user_id=?", [userId], (err, row) => {
+    db.query("select u.product_id, u.action_id as 'liked' from user_interactions u inner join actions a on a.id = u.action_id where action_id=2", [userId], (err, row) => {
       if (err) rejects(err);
       else resolve(row);
     });
