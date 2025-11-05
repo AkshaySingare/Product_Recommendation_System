@@ -213,7 +213,7 @@ export default function UserDashBoard() {
     const msg = isLiked ? "delete" : "add";
 
     UserService.managelike(user.userId, productId, msg)
-      .then((e) => {
+      .then(() => {
         // console.log("Toggele Like    ",e);
         setLikeRefresh((prev) => prev + 1);
       })
